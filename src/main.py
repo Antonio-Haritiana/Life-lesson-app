@@ -1,4 +1,4 @@
-from storage import load_lessons, save_lessons, modify_lessons
+from storage import LessonExtraction, save_lessons, modify_lessons
 from lesson_manager import (
     get_random_lesson,
     create_lesson,
@@ -24,11 +24,13 @@ def main_menu():
 
         if choice == "1":
             """Mix your lessons from the ones in the database"""
-            base_lessons = load_lessons(DATA_PATH)
-            custom_lessons = load_lessons(CUSTOM_PATH)
-            my_lesson = custom_lessons["lessons"]
+            base_lessons = LessonExtraction(DATA_PATH)
+            basic_lesson = base_lessons.load_lessons()
+            custom_lessons = LessonExtraction(CUSTOM_PATH)
+            your_created_lesson = custom_lessons.load_lessons()
+            my_lesson = your_created_lesson["lessons"]
 
-            mixed = mix_lessons(base_lessons, my_lesson)
+            mixed = mix_lessons(basic_lesson, my_lesson)
 
             if not mixed:
                 print("\nNo lessons available yet.")
@@ -41,9 +43,7 @@ def main_menu():
                 print(f"Category: {lesson['category']}")
         elif choice == "2":
             # Load you Json file and return a list
-            custom_lessons = load_lessons(
-                CUSTOM_PATH
-            )  # len(custom_lessons) = 1 de base satria misy lessons
+            custom_lessons = load_lessons(CUSTOM_PATH)
             my_lesson = custom_lessons["lessons"]
             # Create a new dict containning the new lesson
             new_lesson = create_lesson(my_lesson)
