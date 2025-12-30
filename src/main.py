@@ -12,6 +12,7 @@ CUSTOM_PATH = "life_lesson_app\data\custom_lessons.json"
 
 def main_menu():
     """Display the user menu and handle choices."""
+
     while True:
         print("\n--- Life Lesson App ---")
         print("1. Show a random lesson")
@@ -52,10 +53,9 @@ def main_menu():
             # Now we have updated our custom_lessons with new_lesson, so we just write it back to JSON
             try:
                 save_lessons(CUSTOM_PATH, your_created_lesson)
+                print("\n✅ Your lesson has been saved!")
             except:
                 raise Exception("Oops we haven't been able to save your lesson")
-            else:
-                print("\n✅ Your lesson has been saved!")
         elif choice == "3":
             """View all your created lessons only"""
 
@@ -94,25 +94,19 @@ def main_menu():
                                 "notes": "",
                             }
                         )
-                    except:
-                        raise Exception("Ohhh, an error occured!")
-                    else:
                         save_lessons(CUSTOM_PATH, your_created_lesson)
                         print("\n✅ Your lesson has been modified!")
+                    except:
+                        raise Exception("Ohhh, an error occured!")
+
         elif choice == "5":
             """Delete your created lesson"""
+
             print("Here are your created lessons to delete")
-            custom_lessons = load_lessons(CUSTOM_PATH)
-            my_lesson = custom_lessons["lessons"]
 
-            def has_lesson(my_lessons):
-                return bool(my_lessons)
-
-            if not has_lesson(my_lesson):
-                print("You have no lessons yet")
+            if not view_your_lesson(my_lesson):
                 continue
             else:
-                show_your_lessons(my_lesson)
 
                 lesson_to_modify = int(
                     input("What do you want to delete? (enter your lesson number): ")
@@ -130,22 +124,21 @@ def main_menu():
                             my_lesson.pop(id)
                             my_lesson_after_delete.extend(my_lesson)
                             my_lesson.clear()
-                            for x in my_lesson_after_delete:
-                                del x["Lesson_number"]
-                            for i in my_lesson_after_delete:
+                            for id_mumber in my_lesson_after_delete:
+                                del id_mumber["Lesson_number"]
+                            for content in my_lesson_after_delete:
                                 new_id = len(my_lesson) + 1
                                 less_numb = {"Lesson_number": new_id}
-                                less_numb.update(i)
+                                less_numb.update(content)
                                 my_lesson.append(less_numb)
-
+                            print("\n✅ Your lesson has been deleted!")
+                            save_lessons(CUSTOM_PATH, your_created_lesson)
+                        elif confirmation == "no":
+                            print("We won't delete it then 😊")
                         else:
-                            print("Ok, we won't delete it!")
+                            print("Please enter yes or no!")
                     except:
-                        raise Exception("What the hell is happening??")
-                    else:
-                        save_lessons(CUSTOM_PATH, custom_lessons)
-                        print("\n✅ Your lesson has been deleted!")
-
+                        raise Exception("We are sorry, something went wrong")
         elif choice == "6":
             print("\nGoodbye! 👋")
             break
