@@ -1,9 +1,9 @@
-from storage import load_lessons, save_lessons, modify_lessons
+from storage import LessonExtraction, save_lessons, modify_lessons
 from lesson_manager import (
     get_random_lesson,
     create_lesson,
     mix_lessons,
-    show_your_lessons,
+    view_your_lesson,
 )
 
 DATA_PATH = "life_lesson_app\data\lessons.json"
@@ -12,6 +12,7 @@ CUSTOM_PATH = "life_lesson_app\data\custom_lessons.json"
 
 def main_menu():
     """Display the user menu and handle choices."""
+
     while True:
         print("\n--- Life Lesson App ---")
         print("1. Show a random lesson")
@@ -20,138 +21,141 @@ def main_menu():
         print("4. Modify your lesson")
         print("5. Delete your lesson")
         print("6. Exit")
-        choice = input("Choose an option (1-6): ")
+        choice = int(input("Choose an option (1-6): "))
 
-        if choice == "1":
-            """Mix your lessons from the ones in the database"""
-            base_lessons = load_lessons(DATA_PATH)
-            custom_lessons = load_lessons(CUSTOM_PATH)
-            my_lesson = custom_lessons["lessons"]
+        #  Variable used by most of match cases
+        custom_lessons = LessonExtraction(CUSTOM_PATH)
+        your_created_lesson = custom_lessons.load_lessons()
+        my_lesson = your_created_lesson["lessons"]
 
-            mixed = mix_lessons(base_lessons, my_lesson)
+        match choice:
+            case 1:
+                """Mix your lessons from the ones in the database"""
 
-            if not mixed:
-                print("\nNo lessons available yet.")
-            else:
-                # reuse your random function
-                lesson = get_random_lesson(mixed)
-                print("\n✨ Your mixed random life lesson:\n")
-                print(f"Text: {lesson['text']}")
-                print(f"Author: {lesson['author']}")
-                print(f"Category: {lesson['category']}")
-        elif choice == "2":
-            # Load you Json file and return a list
-            custom_lessons = load_lessons(
-                CUSTOM_PATH
-            )  # len(custom_lessons) = 1 de base satria misy lessons
-            my_lesson = custom_lessons["lessons"]
-            # Create a new dict containning the new lesson
-            new_lesson = create_lesson(my_lesson)
-            # Append the new lesson to custom_lessons
-            modify_lessons(new_lesson)
-            # Now we have updated our custom_lessons with new_lesson, so we just write it back to JSON
-            save_lessons(CUSTOM_PATH, custom_lessons)
-            print("\n✅ Your lesson has been saved!")
-        elif choice == "3":
-            """View all your created lessons only"""
-            custom_lessons = load_lessons(CUSTOM_PATH)
-            my_lesson = custom_lessons["lessons"]
+                base_lessons = LessonExtraction(DATA_PATH)
+                basic_lesson = base_lessons.load_lessons()
 
-            def has_lesson(my_lessons):
-                return bool(my_lessons)
+                mixed = mix_lessons(basic_lesson, my_lesson)
 
-            if not has_lesson(my_lesson):
-                print("You have no lessons yet")
-                continue
-            else:
-                show_your_lessons(my_lesson)
-        elif choice == "4":
-            """Modify your created lesson"""
-            print("Here are your created lessons to modify")
-            custom_lessons = load_lessons(CUSTOM_PATH)
-            my_lesson = custom_lessons["lessons"]
-            show_your_lessons(my_lesson)
-            lesson_to_modify = int(
-                input("What do you want to modify? (enter your lesson number): ")
-            )
-            id = lesson_to_modify - 1
-            if not lesson_to_modify:
-                print("Please enter your lesson number")
-            else:
+                if not mixed:
+                    print("\nNo lessons available yet.")
+                else:
+                    lesson = get_random_lesson(mixed)
+                    print("\n✨ Your mixed random life lesson:\n")
+                    print(f"Text: {lesson['text']}")
+                    print(f"Author: {lesson['author']}")
+                    print(f"Category: {lesson['category']}")
+
+            case 2:
+                """Add a new lesson"""
+                # Create a new dict containning the new lesson
+                new_lesson = create_lesson(my_lesson)
+                # Append the new lesson to custom_lessons
+                modify_lessons(new_lesson)
+                # Now we have updated our custom_lessons with new_lesson, so we just write it back to JSON
                 try:
-                    lesson_number = my_lesson[id]["Lesson_number"]
-                    text = input("Lesson text: ") or my_lesson[id]["text"]
-                    author = input("Author (optional): ") or my_lesson[id]["author"]
-                    category = (
-                        input("Category (optional): ") or my_lesson[id]["category"]
-                    )
-                    my_lesson[id].update(
-                        {
-                            "Lesson_number": lesson_number,
-                            "text": text,
-                            "author": author,
-                            "tags": [],
-                            "category": category,
-                            "notes": "",
-                        }
-                    )
+                    save_lessons(CUSTOM_PATH, your_created_lesson)
+                    print("\n✅ Your lesson has been saved!")
                 except:
-                    raise Exception("What the hell is happening??")
+                    raise Exception("Oops we haven't been able to save your lesson")
+
+            case 3:
+                """View all your created lessons only"""
+
+                view_your_lesson(my_lesson)
+
+            case 4:
+                """Modify your created lesson"""
+
+                print("Here are your created lessons to modify")
+
+                if not view_your_lesson(my_lesson):
+                    continue
                 else:
-                    save_lessons(CUSTOM_PATH, custom_lessons)
-                    print("\n✅ Your lesson has been modified!")
-        elif choice == "5":
-            """Delete your created lesson"""
-            print("Here are your created lessons to delete")
-            custom_lessons = load_lessons(CUSTOM_PATH)
-            my_lesson = custom_lessons["lessons"]
 
-            def has_lesson(my_lessons):
-                return bool(my_lessons)
-
-            if not has_lesson(my_lesson):
-                print("You have no lessons yet")
-                continue
-            else:
-                show_your_lessons(my_lesson)
-
-                lesson_to_modify = int(
-                    input("What do you want to delete? (enter your lesson number): ")
-                )
-                id = lesson_to_modify - 1
-                if not lesson_to_modify:
-                    print("Please enter your lesson number")
-                else:
-                    try:
-                        confirmation = input(
-                            "Do you really want to delete this lesson? (yes/no): "
+                    lesson_to_modify = int(
+                        input(
+                            "What do you want to modify? (enter your lesson number): "
                         )
-                        if confirmation == "yes":
-                            my_lesson_after_delete = []
-                            my_lesson.pop(id)
-                            my_lesson_after_delete.extend(my_lesson)
-                            my_lesson.clear()
-                            for x in my_lesson_after_delete:
-                                del x["Lesson_number"]
-                            for i in my_lesson_after_delete:
-                                new_id = len(my_lesson) + 1
-                                less_numb = {"Lesson_number": new_id}
-                                less_numb.update(i)
-                                my_lesson.append(less_numb)
-
-                        else:
-                            print("Ok, we won't delete it!")
-                    except:
-                        raise Exception("What the hell is happening??")
+                    )
+                    id = lesson_to_modify - 1
+                    if not lesson_to_modify:
+                        print("Please enter your lesson number")
                     else:
-                        save_lessons(CUSTOM_PATH, custom_lessons)
-                        print("\n✅ Your lesson has been deleted!")
+                        try:
+                            lesson_number = my_lesson[id]["Lesson_number"]
+                            text = input("Lesson text: ") or my_lesson[id]["text"]
+                            author = (
+                                input("Author (optional): ") or my_lesson[id]["author"]
+                            )
+                            category = (
+                                input("Category (optional): ")
+                                or my_lesson[id]["category"]
+                            )
+                            my_lesson[id].update(
+                                {
+                                    "Lesson_number": lesson_number,
+                                    "text": text,
+                                    "author": author,
+                                    "tags": [],
+                                    "category": category,
+                                    "notes": "",
+                                }
+                            )
+                            save_lessons(CUSTOM_PATH, your_created_lesson)
+                            print("\n✅ Your lesson has been modified!")
+                        except:
+                            raise Exception("Ohhh, an error occured!")
 
-        elif choice == "6":
-            print("\nGoodbye! 👋")
-            break
-        else:
-            print("Invalid choice. Please try again.")
+            case 5:
+                """Delete your created lesson"""
+
+                print("Here are your created lessons to delete")
+
+                if not view_your_lesson(my_lesson):
+                    continue
+                else:
+
+                    lesson_to_modify = int(
+                        input(
+                            "What do you want to delete? (enter your lesson number): "
+                        )
+                    )
+                    id = lesson_to_modify - 1
+                    if not lesson_to_modify:
+                        print("Please enter your lesson number")
+                    else:
+                        try:
+                            confirmation = input(
+                                "Do you really want to delete this lesson? (yes/no): "
+                            )
+                            if confirmation == "yes":
+                                my_lesson_after_delete = []
+                                my_lesson.pop(id)
+                                my_lesson_after_delete.extend(my_lesson)
+                                my_lesson.clear()
+                                for content in my_lesson_after_delete:
+                                    del content["Lesson_number"]
+                                    new_id = len(my_lesson) + 1
+                                    less_numb = {"Lesson_number": new_id}
+                                    less_numb.update(content)
+                                    my_lesson.append(less_numb)
+                                print("\n✅ Your lesson has been deleted!")
+                                save_lessons(CUSTOM_PATH, your_created_lesson)
+                            elif confirmation == "no":
+                                print("We won't delete it then 😊")
+                            else:
+                                print("Please enter yes or no!")
+                        except:
+                            raise Exception("We are sorry, something went wrong")
+
+            case 6:
+                """Exit the program"""
+
+                print("\nGoodbye! 👋")
+                break
+            case _:
+                print("Invalid choice. Please try again.")
 
 
 if __name__ == "__main__":

@@ -1,3 +1,12 @@
 {
-    "lessons": []
+    "lessons": [
+        {
+            "Lesson_number": 1,
+            "text": "You don't have to wait for a perfect moment to act",
+            "author": "Unknown",
+            "tags": [],
+            "category": "Personal",
+            "notes": ""
+        }
+    ]
 }
