@@ -3,7 +3,8 @@ from lesson_manager import (
     get_random_lesson,
     create_lesson,
     mix_lessons,
-    show_your_lessons,
+    LessonChecker,
+    view_lesson,
 )
 
 DATA_PATH = "life_lesson_app\data\lessons.json"
@@ -59,14 +60,8 @@ def main_menu():
         elif choice == "3":
             """View all your created lessons only"""
 
-            def has_lesson(my_lessons):
-                return bool(my_lessons)
+            view_lesson(my_lesson)
 
-            if not has_lesson(my_lesson):
-                print("You have no lessons yet")
-                continue
-            else:
-                show_your_lessons(my_lesson)
         elif choice == "4":
             """Modify your created lesson"""
 
