@@ -22,36 +22,38 @@ def main_menu():
         print("6. Exit")
         choice = input("Choose an option (1-6): ")
 
+        #  Variable used by all if cases
+        custom_lessons = LessonExtraction(CUSTOM_PATH)
+        your_created_lesson = custom_lessons.load_lessons()
+        my_lesson = your_created_lesson["lessons"]
+
         if choice == "1":
             """Mix your lessons from the ones in the database"""
             base_lessons = LessonExtraction(DATA_PATH)
             basic_lesson = base_lessons.load_lessons()
-            custom_lessons = LessonExtraction(CUSTOM_PATH)
-            your_created_lesson = custom_lessons.load_lessons()
-            my_lesson = your_created_lesson["lessons"]
 
             mixed = mix_lessons(basic_lesson, my_lesson)
 
             if not mixed:
                 print("\nNo lessons available yet.")
             else:
-                # reuse your random function
                 lesson = get_random_lesson(mixed)
                 print("\n✨ Your mixed random life lesson:\n")
                 print(f"Text: {lesson['text']}")
                 print(f"Author: {lesson['author']}")
                 print(f"Category: {lesson['category']}")
         elif choice == "2":
-            # Load you Json file and return a list
-            custom_lessons = load_lessons(CUSTOM_PATH)
-            my_lesson = custom_lessons["lessons"]
             # Create a new dict containning the new lesson
             new_lesson = create_lesson(my_lesson)
             # Append the new lesson to custom_lessons
             modify_lessons(new_lesson)
             # Now we have updated our custom_lessons with new_lesson, so we just write it back to JSON
-            save_lessons(CUSTOM_PATH, custom_lessons)
-            print("\n✅ Your lesson has been saved!")
+            try:
+                save_lessons(CUSTOM_PATH, your_created_lesson)
+            except:
+                raise Exception("Oops we haven't been able to save your lesson")
+            else:
+                print("\n✅ Your lesson has been saved!")
         elif choice == "3":
             """View all your created lessons only"""
             custom_lessons = load_lessons(CUSTOM_PATH)

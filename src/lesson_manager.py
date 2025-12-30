@@ -13,7 +13,7 @@ def create_lesson(your_lessons_path):
     print("\n📝 Create your own life lesson:")
     id = (
         len(your_lessons_path) + 1
-    )  ## len anle lessons list ao @ json file, si empty len() = 0
+    )  ## len lessons list in json file, if empty len() = 0
     text = input("Lesson text: ")
     author = input("Author (optional): ") or "Unknown"
     category = input("Category (optional): ") or "Personal"
