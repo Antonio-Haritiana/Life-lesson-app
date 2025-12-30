@@ -54,12 +54,14 @@ class LessonChecker:
             print(f"Category: {lesson['category']}")
 
     def display_status(self):
-        if self.has_lesson():
-            self.show_your_lessons()
-        else:
+        if not self.has_lesson():
             print("You have no lessons yet")
+            return False
+        else:
+            self.show_your_lessons()
+            return True
 
 
-def view_lesson(my_lesson):
+def view_your_lesson(my_lesson):
     checker = LessonChecker(my_lesson)
     return checker.display_status()

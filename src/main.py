@@ -3,8 +3,7 @@ from lesson_manager import (
     get_random_lesson,
     create_lesson,
     mix_lessons,
-    LessonChecker,
-    view_lesson,
+    view_your_lesson,
 )
 
 DATA_PATH = "life_lesson_app\data\lessons.json"
@@ -60,42 +59,46 @@ def main_menu():
         elif choice == "3":
             """View all your created lessons only"""
 
-            view_lesson(my_lesson)
+            view_your_lesson(my_lesson)
 
         elif choice == "4":
             """Modify your created lesson"""
 
             print("Here are your created lessons to modify")
-            show_your_lessons(my_lesson)
-            lesson_to_modify = int(
-                input("What do you want to modify? (enter your lesson number): ")
-            )
-            id = lesson_to_modify - 1
-            if not lesson_to_modify:
-                print("Please enter your lesson number")
+
+            if not view_your_lesson(my_lesson):
+                continue
             else:
-                try:
-                    lesson_number = my_lesson[id]["Lesson_number"]
-                    text = input("Lesson text: ") or my_lesson[id]["text"]
-                    author = input("Author (optional): ") or my_lesson[id]["author"]
-                    category = (
-                        input("Category (optional): ") or my_lesson[id]["category"]
-                    )
-                    my_lesson[id].update(
-                        {
-                            "Lesson_number": lesson_number,
-                            "text": text,
-                            "author": author,
-                            "tags": [],
-                            "category": category,
-                            "notes": "",
-                        }
-                    )
-                except:
-                    raise Exception("Ohhh, an error occured!")
+
+                lesson_to_modify = int(
+                    input("What do you want to modify? (enter your lesson number): ")
+                )
+                id = lesson_to_modify - 1
+                if not lesson_to_modify:
+                    print("Please enter your lesson number")
                 else:
-                    save_lessons(CUSTOM_PATH, your_created_lesson)
-                    print("\n✅ Your lesson has been modified!")
+                    try:
+                        lesson_number = my_lesson[id]["Lesson_number"]
+                        text = input("Lesson text: ") or my_lesson[id]["text"]
+                        author = input("Author (optional): ") or my_lesson[id]["author"]
+                        category = (
+                            input("Category (optional): ") or my_lesson[id]["category"]
+                        )
+                        my_lesson[id].update(
+                            {
+                                "Lesson_number": lesson_number,
+                                "text": text,
+                                "author": author,
+                                "tags": [],
+                                "category": category,
+                                "notes": "",
+                            }
+                        )
+                    except:
+                        raise Exception("Ohhh, an error occured!")
+                    else:
+                        save_lessons(CUSTOM_PATH, your_created_lesson)
+                        print("\n✅ Your lesson has been modified!")
         elif choice == "5":
             """Delete your created lesson"""
             print("Here are your created lessons to delete")
