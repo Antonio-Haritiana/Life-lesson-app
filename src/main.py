@@ -23,7 +23,7 @@ def main_menu():
         print("6. Exit")
         choice = input("Choose an option (1-6): ")
 
-        #  Variable used by all if cases
+        #  Variable used by most of if cases
         custom_lessons = LessonExtraction(CUSTOM_PATH)
         your_created_lesson = custom_lessons.load_lessons()
         my_lesson = your_created_lesson["lessons"]
@@ -44,6 +44,7 @@ def main_menu():
                 print(f"Text: {lesson['text']}")
                 print(f"Author: {lesson['author']}")
                 print(f"Category: {lesson['category']}")
+
         elif choice == "2":
             """Add a new lesson"""
             # Create a new dict containning the new lesson
@@ -56,6 +57,7 @@ def main_menu():
                 print("\n✅ Your lesson has been saved!")
             except:
                 raise Exception("Oops we haven't been able to save your lesson")
+
         elif choice == "3":
             """View all your created lessons only"""
 
@@ -124,9 +126,8 @@ def main_menu():
                             my_lesson.pop(id)
                             my_lesson_after_delete.extend(my_lesson)
                             my_lesson.clear()
-                            for id_mumber in my_lesson_after_delete:
-                                del id_mumber["Lesson_number"]
                             for content in my_lesson_after_delete:
+                                del content["Lesson_number"]
                                 new_id = len(my_lesson) + 1
                                 less_numb = {"Lesson_number": new_id}
                                 less_numb.update(content)
@@ -139,7 +140,10 @@ def main_menu():
                             print("Please enter yes or no!")
                     except:
                         raise Exception("We are sorry, something went wrong")
+
         elif choice == "6":
+            """Exit the program"""
+
             print("\nGoodbye! 👋")
             break
         else:
