@@ -69,9 +69,8 @@ def main_menu():
                 show_your_lessons(my_lesson)
         elif choice == "4":
             """Modify your created lesson"""
+
             print("Here are your created lessons to modify")
-            custom_lessons = load_lessons(CUSTOM_PATH)
-            my_lesson = custom_lessons["lessons"]
             show_your_lessons(my_lesson)
             lesson_to_modify = int(
                 input("What do you want to modify? (enter your lesson number): ")
@@ -98,9 +97,9 @@ def main_menu():
                         }
                     )
                 except:
-                    raise Exception("What the hell is happening??")
+                    raise Exception("Ohhh, an error occured!")
                 else:
-                    save_lessons(CUSTOM_PATH, custom_lessons)
+                    save_lessons(CUSTOM_PATH, your_created_lesson)
                     print("\n✅ Your lesson has been modified!")
         elif choice == "5":
             """Delete your created lesson"""
