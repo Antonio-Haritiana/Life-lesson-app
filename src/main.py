@@ -29,6 +29,7 @@ def main_menu():
 
         if choice == "1":
             """Mix your lessons from the ones in the database"""
+
             base_lessons = LessonExtraction(DATA_PATH)
             basic_lesson = base_lessons.load_lessons()
 
@@ -43,6 +44,7 @@ def main_menu():
                 print(f"Author: {lesson['author']}")
                 print(f"Category: {lesson['category']}")
         elif choice == "2":
+            """Add a new lesson"""
             # Create a new dict containning the new lesson
             new_lesson = create_lesson(my_lesson)
             # Append the new lesson to custom_lessons
@@ -56,8 +58,6 @@ def main_menu():
                 print("\n✅ Your lesson has been saved!")
         elif choice == "3":
             """View all your created lessons only"""
-            custom_lessons = load_lessons(CUSTOM_PATH)
-            my_lesson = custom_lessons["lessons"]
 
             def has_lesson(my_lessons):
                 return bool(my_lessons)

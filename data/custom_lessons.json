@@ -1,0 +1,20 @@
+{
+    "lessons": [
+        {
+            "Lesson_number": 1,
+            "text": "Wrong is wrong even if everyone is doing it !",
+            "author": "A wise man",
+            "tags": [],
+            "category": "Life quote",
+            "notes": ""
+        },
+        {
+            "Lesson_number": 2,
+            "text": "You are free if you can resist to temptation",
+            "author": "Unknown",
+            "tags": [],
+            "category": "Personal",
+            "notes": ""
+        }
+    ]
+}
